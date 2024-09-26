@@ -1,0 +1,196 @@
+ <!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+  
+</head>
+<body>
+    <h1 id="title">Todo Tracker</h1>
+
+    <form>
+        <input type="text" id="user-todo" placeholder="New Todo" required>
+    </form>
+
+    <h2 id="todo-header">Todos</h2>
+    <ul>
+
+    </ul>
+
+    <button id="clear">Clear All</button>
+
+    <script>
+        
+        var form = document.querySelector('form');
+        var todoList = document.querySelector('ul');
+        var button = document.querySelector('button');
+        var input = document.getElementById('user-todo');
+
+
+
+
+        var todosArray = localStorage.getItem('todos') ? JSON.parse(localStorage.getItem('todos')) : []
+
+        localStorage.setItem('todos', JSON.stringify(todosArray));
+   
+        var storage = JSON.parse(localStorage.getItem('todos'))
+
+        
+       
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            todosArray.push(input.value);
+            localStorage.setItem('todos',JSON.stringify(todosArray))
+            todoMaker(input.value);
+            input.value = '';
+        });
+
+         
+
+        function loadTodos() {
+        todosArray.forEach(todo => todoMaker(todo.text, todo.id));
+    }
+
+        var todoMaker = function (text) {
+            var todo = document.createElement('li');
+            todo.textContent = text;
+            todoList.appendChild(todo);
+        }
+
+        
+         for (var i =0; i <  storage.length; i++){
+            todoMaker(storage[i])
+         }
+
+
+        button.addEventListener('click', function () {
+
+            localStorage.clear()
+            while (todoList.firstChild) {
+                todoList.removeChild(todoList.firstChild);
+            }
+            
+        });
+
+    </script>
+
+</body>
+
+</html>  -->
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1 id="title">Todo Tracker</h1>
+
+    <form>
+        <input type="text" id="user-todo" placeholder="New Todo" required>
+    </form>
+    
+    <h2 id="todo-header">Todos</h2>
+    <ul></ul>
+    
+    <button id="clear">Clear All</button>
+    
+    <script>
+        var form = document.querySelector('form');
+        var todoList = document.querySelector('ul');
+        var button = document.querySelector('button');
+        var input = document.getElementById('user-todo');
+    
+        var todosArray = localStorage.getItem('todos') ? JSON.parse(localStorage.getItem('todos')) : [];
+        loadTodos();
+    
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value.trim()) {
+                addTodo(input.value);
+                input.value = '';
+            }
+        });
+    
+        function loadTodos() {
+            todosArray.forEach(todo => todoMaker(todo.text, todo.id));
+        }
+    
+        function addTodo(text) {
+            var id = Date.now(); // Unique ID for each todo
+            todosArray.push({ text, id });
+            localStorage.setItem('todos', JSON.stringify(todosArray));
+            todoMaker(text, id);
+        }
+    
+        function todoMaker(text, id) {
+            var todo = document.createElement('li');
+            todo.textContent = text;
+    
+            // Edit button
+            var editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', function () {
+                editTodo(id);
+            });
+    
+            // Delete button
+            var deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', function () {
+                deleteTodo(id);
+            });
+    
+            todo.appendChild(editButton);
+            todo.appendChild(deleteButton);
+            todoList.appendChild(todo);
+        }
+    
+        function editTodo(id) {
+            var todo = todosArray.find(todo => todo.id === id);
+            var newText = prompt("Edit todo:", todo.text);
+            if (newText) {
+                todo.text = newText;
+                localStorage.setItem('todos', JSON.stringify(todosArray));
+                refreshTodos();
+            }
+        }
+    
+        function deleteTodo(id) {
+            todosArray = todosArray.filter(todo => todo.id !== id);
+            localStorage.setItem('todos', JSON.stringify(todosArray));
+            refreshTodos();
+        }
+    
+        function refreshTodos() {
+            while (todoList.firstChild) {
+                todoList.removeChild(todoList.firstChild);
+            }
+            loadTodos();
+        }
+    
+        button.addEventListener('click', function () {
+            localStorage.clear();
+            while (todoList.firstChild) {
+                todoList.removeChild(todoList.firstChild);
+            }
+            todosArray = [];
+        });
+    </script>
+        
+</body>
+</html> 
